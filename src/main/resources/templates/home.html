@@ -1,14 +1,51 @@
 <html xmlns:th="https://www.thymeleaf.org">
 <head>
     <title>Comptage de mots</title>
+    <style>
+        body { font-family: Arial, sans-serif; margin: 20px; padding: 20px; border: 1px solid #ccc; border-radius: 10px; width: 400px; }
+        h1, h2 { color: #333; }
+        p { color: green; margin-top: 10px; }
+    </style>
 </head>
-<body >
+<body>
     <h1>Initialiser les acteurs</h1>
-
     <!-- Initialisation des acteurs -->
-    <form action="/occurence/init" method="post">
+    <form action="/occurence/init" method="post" onsubmit="showMessage('initMessage')">
         <button type="submit">Initialiser</button>
     </form>
+    <p id="initMessage" style="display:none;">Acteurs initialisés</p>
 
+    <h2>Importer un fichier texte</h2>
+    <!-- Importation du fichier -->
+    <form action="/occurence/upload" method="post" enctype="multipart/form-data" onsubmit="showMessage('uploadMessage')">
+        <input type="file" name="file" accept=".txt" required />
+        <button type="submit">Importer</button>
+    </form>
+    <p id="uploadMessage" style="display:none;">Fichier importé</p>
+
+    <h2>Rechercher un mot</h2>
+    <form action="/occurence/count" method="get" onsubmit="showResult(event)">
+        <input type="text" name="word" placeholder="Entrez un mot" required />
+        <button type="submit">Rechercher</button>
+    </form>
+    <p id="searchResult" style="display:none;"></p>
+
+    <script>
+        function showMessage(id) {
+            const messageElement = document.getElementById(id);
+            messageElement.style.display = 'block';
+        }
+
+        async function showResult(event) {
+            event.preventDefault();
+            const word = event.target.word.value;
+            const response = await fetch(`/occurence/count?word=${word}`);
+            const result = await response.text();
+
+            const resultElement = document.getElementById('searchResult');
+            resultElement.textContent = result;
+            resultElement.style.display = 'block';
+        }
+    </script>
 </body>
 </html>

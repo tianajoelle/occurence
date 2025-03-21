@@ -17,12 +17,15 @@ public class MapActor extends UntypedActor{
 
 	@Override
 	public void onReceive(Object message) throws Exception {
-		if (message instanceof Message m) {
-            String word = m.word();
-            System.out.println("Mapper: Traitement du mot: " + word);
+		if (message instanceof String line) {
+            System.out.println(getSelf().path().name() + "reçoit la ligne: " + line);
             
-            // Envoi du message au reducer
-            reducers[0].tell(word, getSelf());
+            String[] words = line.split("\\s+");
+            for (String word : words) {
+            	String cleanWord = word.toLowerCase();
+            	ActorRef targetReducer = reducers[Math.abs(word.hashCode()) % reducers.length];
+            	targetReducer.tell(new Message(cleanWord), getSelf());
+            }
         } else {
             unhandled(message);
         }

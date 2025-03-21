@@ -19,12 +19,12 @@ public class ReduceActor extends UntypedActor{
 	@Override
 	public void onReceive(Object message) throws Exception {
 		if (message instanceof Message msg) { 	
-            String cleanWord = msg.word().toLowerCase();
+            String cleanWord = msg.word().toLowerCase().replaceAll("[^\\p{L}]", "");
             wordCounts.put(cleanWord, wordCounts.getOrDefault(cleanWord, 0) + 1);
             System.out.println("Reducer " + getSelf().path().name() + " - Compte de '" + cleanWord + "' : " + wordCounts.get(cleanWord));
         
         } else if (message instanceof RequestCount request) {
-        	String cleanRequest = request.word().toLowerCase();
+        	String cleanRequest = request.word().toLowerCase().replaceAll("[^\\p{L}]", "");
             int count = wordCounts.getOrDefault(cleanRequest, 0);
             System.out.println("Reducer " + getSelf().path().name() + " - Occurrences de '" + cleanRequest + "' : " + count);
             getSender().tell(count, getSelf());  

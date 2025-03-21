@@ -22,7 +22,7 @@ public class MapActor extends UntypedActor{
             
             String[] words = line.split("\\s+");
             for (String word : words) {
-            	String cleanWord = word.toLowerCase();
+            	String cleanWord = word.toLowerCase().replaceAll("[^\\p{L}]", "");
             	ActorRef targetReducer = reducers[Math.abs(word.hashCode()) % reducers.length];
             	targetReducer.tell(new Message(cleanWord), getSelf());
             }

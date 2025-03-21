@@ -48,7 +48,7 @@ public class AkkaService {
     }
 
     public ActorRef partition(String word) {
-        String cleanWord = word.toLowerCase();
+        String cleanWord = word.toLowerCase().replaceAll("[^\\p{L}]", "");
         int index = Math.abs(cleanWord.hashCode() % reducers.length);
         return reducers[index];
     }
